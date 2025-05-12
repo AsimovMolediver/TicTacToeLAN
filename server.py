@@ -19,10 +19,11 @@ def check_empate(tab):
     return all(cell != " " for cell in tab)
 
 def enviar_tabuleiro():
-    board_str = "|".join(board)  # envia como 'X|O| | |X| |O| |X'
+    board_str = ""
+    for i in range(3):
+        board_str += "".join(board[i*3:(i+1)*3]) + "\n"
     for jogador in jogadores:
-        jogador.sendall(f"TABULEIRO:{board_str}".encode())
-
+        jogador.sendall(board_str.encode())
 
 def lidar_com_jogador(conn, idx):
     global turno

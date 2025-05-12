@@ -3,7 +3,7 @@ import sys
 import requests
 import socket
 import threading
-#from tictactoe import *
+from tictactoe import *
 
 # Inicialização do Pygame
 pygame.init()
@@ -20,32 +20,6 @@ tamanho_celula = largura // 3  # Divide a largura em 3 para o tabuleiro de jogo 
 # Defina a fonte para exibir "X" e "O"
 fonte = pygame.font.Font(None, 100)
 
-def setArray():
-    return [["" for _ in range(3)] for _ in range(3)]
-
-def victory(tabuleiro, jogador):
-    # Checa linhas
-    for linha in tabuleiro:
-        if all(casa == jogador for casa in linha):
-            return True
-
-    # Checa colunas
-    for col in range(3):
-        if all(tabuleiro[linha][col] == jogador for linha in range(3)):
-            return True
-
-    # Checa diagonais
-    if all(tabuleiro[i][i] == jogador for i in range(3)):
-        return True
-    if all(tabuleiro[i][2 - i] == jogador for i in range(3)):
-        return True
-
-    return False
-
-def check_draw(tabuleiro):
-    return all(casa != "" for linha in tabuleiro for casa in linha)
-
-
 matriz = setArray()
 # Variável para alternar entre "X" e "O"
 
@@ -55,7 +29,6 @@ tabuleiro = [["" for _ in range(3)] for _ in range(3)]
 WIDTH, HEIGHT = 800, 600
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Menu")
-
 
 def reset_screen():
     global window, WIDTH, HEIGHT
@@ -72,10 +45,13 @@ def reset_screen_menu():
 def tela_vitoriaX():
     while True:
         window.fill(WHITE)
+
         draw_text("Vitória do X", font, BLACK, window, WIDTH // 2, HEIGHT // 2)
 
+
+        # Desenha o botão
         button_width, button_height = 200, 50
-        button_x, button_y = (WIDTH - button_width) // 2, (HEIGHT + button_height) // 2
+        button_x, button_y = (WIDTH - button_width) // 2, (HEIGHT + button_height) // 2  # Ajuste da posição do botão
         draw_button("Menu", font, BLACK, GREEN, window, button_x, button_y, button_width, button_height)
 
         pygame.display.update()
@@ -86,8 +62,31 @@ def tela_vitoriaX():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
+                # Verifica se o clique ocorreu dentro da área do botão
                 if button_x <= mouse_x <= button_x + button_width and button_y <= mouse_y <= button_y + button_height:
-                    return  # <-- sai da função ao clicar no botão
+                    main_menu()
+def tela_vitoriaO():
+    while True:
+        window.fill(WHITE)
+
+        draw_text("Vitória do O", font, BLACK, window, WIDTH // 2, HEIGHT // 2)
+
+        # Desenha o botão
+        button_width, button_height = 200, 50
+        button_x, button_y = (WIDTH - button_width) // 2, (HEIGHT + button_height) // 2  # Ajuste da posição do botão
+        draw_button("Menu", font, BLACK, GREEN, window, button_x, button_y, button_width, button_height)
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                # Verifica se o clique ocorreu dentro da área do botão
+                if button_x <= mouse_x <= button_x + button_width and button_y <= mouse_y <= button_y + button_height:
+                    main_menu()
 def tela_empate():
     while True:
         window.fill(WHITE)
@@ -132,22 +131,19 @@ def jogar():
                     else:
                         jogador = "X"
                 if victory(matriz, "O"):
-                    control = False
                     tela_vitoriaO()
-                    return
+                    control = False
+                    break
                 elif victory(matriz, "X"):
-                    control = False
                     tela_vitoriaX()
-                    return
-                elif check_draw(matriz):
                     control = False
+                    break
+                elif check_draw(matriz):
                     tela_empate()
-                    return
-        else:
-
-            control = False
-            break
-    desenhar_tabuleiro()
+                    control = False
+                    break
+                desenhar_tabuleiro()
+        desenhar_tabuleiro()
 def jogar_lan():
     reset_screen()
     global matriz
@@ -188,12 +184,16 @@ def jogar_lan():
                         tela_empate()
                     jogo_em_andamento = False
                     break
-                elif data.startswith("TABULEIRO:"):
-                    partes = data[len("TABULEIRO:"):].split("|")
-                    if len(partes) == 9:
-                        nova_matriz = [[partes[i*3 + j] if partes[i*3 + j] != " " else "" for j in range(3)] for i in range(3)]
-                        matriz = nova_matriz
-
+                elif any(c in data for c in ("X", "O", " ")):
+                    linhas = data.splitlines()  # <-- sem strip()
+                    nova_matriz = [["" for _ in range(3)] for _ in range(3)]
+                    pos = 0
+                    for linha in linhas:
+                        for c in linha:
+                            if c in ["X", "O", " "]:
+                                nova_matriz[pos // 3][pos % 3] = c if c != " " else ""
+                                pos += 1
+                    matriz = nova_matriz
             except Exception as e:
                 print("Erro na conexão com o servidor:", e)
                 break
