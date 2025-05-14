@@ -151,41 +151,50 @@ def jogar_lan():
     jogador = ""
     minha_vez = False
     jogo_em_andamento = True
+    resultado = None
+    running = True  # Flag para controlar a thread de escuta
 
     # Criação do socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
     try:
-        s.connect(("localhost", 5555))  # Ajuste o IP/porta conforme necessário
+        s.connect(("localhost", 5555))
     except:
-        print("Erro ao conectar ao servidor.")
-        return
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(("localhost", 5555))
+        
 
+    # Função de escuta do servidor
     def ouvir_servidor():
-        nonlocal jogador, minha_vez, jogo_em_andamento
+        nonlocal jogador, minha_vez, jogo_em_andamento, resultado, running
         global matriz
-        while True:
+        while running:
             try:
                 data = s.recv(1024).decode()
                 if not data:
                     break
 
+                # Identificação do jogador
                 if "Jogador X" in data:
                     jogador = "X"
                 elif "Jogador O" in data:
                     jogador = "O"
                 elif "sua vez" in data.lower():
-                    minha_vez = True
+                    minha_vez = True 
+
+                # Resultado do jogo
                 elif "venceu" in data or "Empate" in data:
                     if "X venceu" in data:
-                        tela_vitoriaX()
+                        resultado = "X"
                     elif "O venceu" in data:
-                        tela_vitoriaO()
+                        resultado = "O"
                     else:
-                        tela_empate()
+                        resultado = "Empate"
                     jogo_em_andamento = False
                     break
+
+                # Atualização do tabuleiro
                 elif any(c in data for c in ("X", "O", " ")):
-                    linhas = data.splitlines()  # <-- sem strip()
+                    linhas = data.splitlines()
                     nova_matriz = [["" for _ in range(3)] for _ in range(3)]
                     pos = 0
                     for linha in linhas:
@@ -194,18 +203,27 @@ def jogar_lan():
                                 nova_matriz[pos // 3][pos % 3] = c if c != " " else ""
                                 pos += 1
                     matriz = nova_matriz
+
             except Exception as e:
-                print("Erro na conexão com o servidor:", e)
+                if running:  # Só mostra erro se não foi um encerramento intencional
+                    print("Erro na conexão com o servidor:", e)
                 break
 
     # Inicia thread para escutar o servidor
-    threading.Thread(target=ouvir_servidor, daemon=True).start()
+    thread = threading.Thread(target=ouvir_servidor, daemon=True)
+    thread.start()
 
-    # Loop do jogo
+    # Loop principal do jogo
     while jogo_em_andamento:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                running = False
+                jogo_em_andamento = False
                 pygame.quit()
+                try:
+                    s.shutdown(socket.SHUT_RDWR)
+                except:
+                    pass
                 s.close()
                 sys.exit()
 
@@ -216,14 +234,34 @@ def jogar_lan():
                 pos = linha * 3 + coluna
 
                 if 0 <= linha < 3 and 0 <= coluna < 3 and matriz[linha][coluna] == "":
-                    s.sendall(str(pos).encode())
-                    minha_vez = False
+                    try:
+                        s.sendall(str(pos).encode())
+                        minha_vez = False
+                    except:
+                        jogo_em_andamento = False
+                        break
 
         desenhar_tabuleiro()
+        pygame.display.update()
 
-    # Espera e volta ao menu
-    pygame.time.wait(2000)
-    main_menu()
+    # Encerramento limpo
+    running = False
+    try:
+        s.shutdown(socket.SHUT_RDWR)
+    except:
+        pass
+    s.close()
+
+    # Exibe o resultado e retorna ao menu
+    if resultado == "X":
+        tela_vitoriaX()
+        return
+    elif resultado == "O":
+        tela_vitoriaO()
+        return
+    else:
+        tela_empate()
+        return
 
 
 
