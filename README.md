@@ -16,6 +16,8 @@ Projeto de Jogo da Velha (Tic Tac Toe) desenvolvido em Python com suporte a part
 - Biblioteca `pygame` instalada:
   ```bash
   pip install pygame
+
+## Início de Jogatina
 - Executar o script server.py(configuração de endereço deve ser feita antes)
 - Executar init.py
 
