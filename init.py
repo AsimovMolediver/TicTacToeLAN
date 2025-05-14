@@ -317,18 +317,15 @@ def main_menu():
         button_width, button_height = 200, 50
         button_start = pygame.Rect(WIDTH // 2 - button_width // 2, HEIGHT // 2 - button_height // 2 - 25, button_width, button_height)
         button_instrucoes = pygame.Rect(WIDTH // 2 - button_width // 2, HEIGHT // 2 - button_height // 2 + 50, button_width, button_height)
-        button_ranks = pygame.Rect(WIDTH // 2 - button_width // 2, HEIGHT // 2 - button_height // 2 + 125, button_width, button_height)
-        button_sair = pygame.Rect(WIDTH // 2 - button_width // 2, HEIGHT // 2 - button_height // 2 + 200, button_width, button_height)
+        button_sair = pygame.Rect(WIDTH // 2 - button_width // 2, HEIGHT // 2 - button_height // 2 + 125, button_width, button_height)
 
         pygame.draw.rect(window, BLACK, button_start)
         pygame.draw.rect(window, BLACK, button_instrucoes)
-        pygame.draw.rect(window, BLACK, button_ranks)
         pygame.draw.rect(window, BLACK, button_sair)
 
         draw_text("Local", font, WHITE, window, WIDTH // 2, HEIGHT // 2 - 25)
         draw_text("LAN", font, WHITE, window, WIDTH // 2, HEIGHT // 2 + 50)
-        draw_text("Ranking", font, WHITE, window, WIDTH // 2, HEIGHT // 2 + 125)
-        draw_text("Sair", font, WHITE, window, WIDTH // 2, HEIGHT // 2 + 200)
+        draw_text("Sair", font, WHITE, window, WIDTH // 2, HEIGHT // 2 + 125)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -338,9 +335,7 @@ def main_menu():
                 if button_start.collidepoint(pygame.mouse.get_pos()):
                     jogar()
                 elif button_instrucoes.collidepoint(pygame.mouse.get_pos()):
-                    jogar_lan()
-                elif button_ranks.collidepoint(pygame.mouse.get_pos()):
-                    ranking()    
+                    jogar_lan()  
                 elif button_sair.collidepoint(pygame.mouse.get_pos()):
                     pygame.quit()
                     sys.exit()
