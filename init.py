@@ -262,17 +262,6 @@ def jogar_lan():
         tela_empate()
         return
 
-
-
-def ranking():
-    response = requests.get('http://localhost:5002/score')
-    if response.status_code == 200:
-        scores = response.json()
-        print(f"Pontuação dos jogadores: {scores}")
-    else:
-        print("Falha ao obter a pontuação.")
-        
-
         
 # Fonte e tamanho do texto
 font = pygame.font.Font(None, 50)
