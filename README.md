@@ -1,5 +1,3 @@
-# TicTacToeLAN
-
 # 🎮 Jogo da Velha em Rede com Python
 
 Projeto de Jogo da Velha (Tic Tac Toe) desenvolvido em Python com suporte a partidas entre dois jogadores via rede (socket TCP) e uso de threads para controle simultâneo da comunicação.
@@ -17,10 +15,16 @@ Projeto de Jogo da Velha (Tic Tac Toe) desenvolvido em Python com suporte a part
 ### Pré-requisitos
 
 - Python 3.x
-- Sistemas operacionais compatíveis com socket (Windows, Linux, Mac)
+- Biblioteca `pygame` instalada:
+  ```bash
+  pip install pygame
+- Executar o script server.py(configuração de endereço deve ser feita antes)
+- Executar init.py
 
-### Etapas
+## MODOS DE JOGO
 
-1. **Inicie o servidor**:
-   ```bash
-   python server.py
+- Local
+- Multiplayer LAN
+
+
+ 
