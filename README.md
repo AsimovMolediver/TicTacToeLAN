@@ -2,8 +2,6 @@
 
 Projeto de Jogo da Velha (Tic Tac Toe) desenvolvido em Python com suporte a partidas entre dois jogadores via rede (socket TCP) e uso de threads para controle simultâneo da comunicação.
 
-> ⚠️ A funcionalidade de **ranking** está presente na interface, mas **não está implementada/funcional** neste protótipo.
-
 ## 📁 Estrutura dos Arquivos
 
 - `init.py`: Cliente principal. Responsável por iniciar a interface, conectar-se ao servidor e interagir com o jogo.
