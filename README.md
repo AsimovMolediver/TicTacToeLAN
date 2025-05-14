@@ -19,7 +19,7 @@ Projeto de Jogo da Velha (Tic Tac Toe) desenvolvido em Python com suporte a part
 
 ## Início de Jogatina
 - Executar o script server.py
-- (configuração de endereço deve ser feita antes), Na função jogar_lan, substituir onde tem localhost, pelo ipv4 do pc que está criando o server
+- Na função jogar_lan, substituir onde tem localhost, pelo ipv4 do pc que está criando o server
 - Executar init.py
 
 ## MODOS DE JOGO
