@@ -1,6 +1,5 @@
 import pygame
 import sys
-import requests
 import socket
 import threading
 from tictactoe import *
